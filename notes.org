@@ -1,0 +1,85 @@
+#+TITLE: Udemy: Socket Programming in C
+#+DATE: \today
+#+AUTHOR: Sachin
+#+EMAIL: iclcoolster@gmail.com
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:comment d:(not "LOGBOOK") date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
+#+CREATOR: Emacs 24.4.1 (Org mode 8.2.10)
+#+DESCRIPTION:
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+
+** Theory
+   - *Sockets* are low level endpoint used to process information
+     across network
+   - Networking protocol like HTTP, FTP rely on sockets underneath too
+     make connections
+   - A socket is a two-way endpoint: we can send as well as receive
+     information to and fro the socket
+
+   - *Client socket workflow*
+     #+BEGIN_SRC text nil
+
+                        +--------------------------+
+                        |                          |
+                        |        socket()          |
+                        +-----------+--------------+
+                                    |
+                                    |
+                        +-----------v--------------+
+                        |                          |
+                        |        connect()         |
+                        +------------+-------------+
+                                     |
+                                     |
+                        +------------v-------------+
+                        |                          |
+                        |          recv()          |
+                        +--------------------------+
+
+     #+END_SRC
+
+     * A socket is created with =socket()=
+     * a socket is connected to remote address with =connect()=
+     * and retrieved data with =recv()=
+
+
+   - *Server socket workflow*
+     #+BEGIN_SRC text nil
+
+
+                        +--------------------------+
+                        |                          |
+                        |        socket()          |
+                        +-----------+--------------+
+                                    |
+                                    |
+                        +-----------v--------------+
+                        |                          |
+                        |          bind()          |
+                        +------------+-------------+
+                                     |
+                                     |
+                        +------------v-------------+
+                        |                          |
+                        |          listen()        |
+                        +------------+-------------+
+                                     |
+                                     |
+                        +------------v-------------+
+                        |                          |
+                        |         accept()         |
+                        +--------------------------+
+
+     #+END_SRC
+
+     * We also need to create a =socket()=
+     * then we bind that socket to IP address and port
+     * where it can =listen()= for connections
+     * and =accept()= connection
+     * in order to =send()= and =recv()= data from other sockets it
+       has connected to.
