@@ -15,10 +15,11 @@ int main(int argc, char *argv[])
 	server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
 	/* define server address */
-	struct sockaddr_in server_address;
-	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(9002);
-	server_address.sin_addr.s_addr = INADDR_ANY;
+	struct sockaddr_in server_address = {
+		.sin_family = AF_INET,
+		.sin_port = htons(9002),
+		.sin_addr.s_addr = INADDR_ANY,
+	};
 
 	/* bind socket to IP address */
 	 bind(server_socket,
