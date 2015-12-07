@@ -78,8 +78,43 @@
      #+END_SRC
 
      * We also need to create a =socket()=
-     * then we bind that socket to IP address and port
+     * then we =bind()= that socket to IP address and port
      * where it can =listen()= for connections
      * and =accept()= connection
      * in order to =send()= and =recv()= data from other sockets it
        has connected to.
+
+   - HTTP
+     + HTTP is built in top of existing TCP
+     + It has request-response cycle
+
+     + *HTTP client/server*
+       #+BEGIN_SRC text
+
+                 REQUEST                     RESPONSE
+                 =======                     ========
+
+         +--------------------+      +---------------------+
+         |                    |      |                     |
+         |  GET/index.html    | |---->       SERVER        |
+         |                    | |    +----------+----------+
+         +---------+----------+ |               |
+                   |            |               |
+                   |            |               |
+         +---------v----------+ |    +----------v----------+
+         |                    | |    |                     |
+         |      SERVER        | |    |  200 OK  html       |
+         +---------+----------+ |    +----------+----------+
+                   |            |               |
+                   |            |               |
+                   |            |    +----------v---------+
+                   |------------+    |                    |
+                                     |        CLIENT      |
+                                     +--------------------+
+
+       #+END_SRC
+
+       * The client requests a resource(index.html) with certain
+         method(GET)
+       * If the resource is available, the server sends 200 OK
+         response with resource(html) in response body to the client.
