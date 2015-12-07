@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 		.sin_port = htons(80),
 	};
 
-	inet_aton(address, &remote_address.sin_addr.s_addr);
+	inet_aton(address, &remote_address.sin_addr);
 
 	connect(client_socket,
 		(struct sockaddr *) &remote_address,
