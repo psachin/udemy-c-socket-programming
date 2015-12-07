@@ -1,3 +1,10 @@
+/*
+  Usage:
+  $ make
+  $ ./tcp_client
+
+  Requires tcp_server running in other terminal
+ */
 #include <stdio.h>
 #include <stdlib.h>
 

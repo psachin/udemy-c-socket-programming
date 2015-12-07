@@ -1,3 +1,10 @@
+/*
+  Usage:
+  $ make
+  $ ./http_server
+
+  Open the browser's URL: localhost:8001
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>		/* to handle string data */
