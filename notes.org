@@ -1,120 +1,114 @@
-#+TITLE: Udemy: Socket Programming in C
+#+TITLE: Socket programming in C
 #+DATE: \today
-#+AUTHOR: Sachin
-#+EMAIL: iclcoolster@gmail.com
-#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+OPTIONS: author:t c:nil creator:comment d:(not "LOGBOOK") date:t
-#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
-#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
-#+CREATOR: Emacs 24.4.1 (Org mode 8.2.10)
-#+DESCRIPTION:
-#+EXCLUDE_TAGS: noexport
-#+KEYWORDS:
-#+LANGUAGE: en
-#+SELECT_TAGS: export
+#+OPTIONS: texht:t
+#+OPTIONS: toc:nil email:nil
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS:
+#+LATEX_HEADER_EXTRA:
+#+LaTeX_HEADER: \usepackage[a4paper, total={7in, 10in}]{geometry}
+#+LaTeX_HEADER: \usepackage[utf8]{inputenc}
+#+LaTeX_HEADER: \usepackage[english]{babel}
 
-** Theory
-   - *Sockets* are low level endpoint used to process information
-     across network
-   - Networking protocol like HTTP, FTP rely on sockets underneath too
-     make connections
-   - A socket is a two-way endpoint: we can send as well as receive
-     information to and fro the socket
+#+LaTeX_HEADER: \usepackage{minted}
+#+LaTeX_HEADER: \usemintedstyle{emacs}
 
-   - *Client socket workflow*
-     #+BEGIN_SRC text nil
+#+LaTeX_HEADER: \renewcommand{\familydefault}{\rmdefault}
+#+LaTeX_HEADER: \usepackage[usenames, dvipsnames]{xcolor}
+#+LaTeX_HEADER: \pagenumbering{arabic}
+#+LaTeX_HEADER: \usepackage{hyperref}
+#+LaTeX_HEADER: \hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+#+LaTeX_HEADER: \urlstyle{same}
+#+LaTeX_HEADER: \usepackage{attachfile}
 
-                        +--------------------------+
-                        |                          |
-                        |        socket()          |
-                        +-----------+--------------+
-                                    |
-                                    |
-                        +-----------v--------------+
-                        |                          |
-                        |        connect()         |
-                        +------------+-------------+
-                                     |
-                                     |
-                        +------------v-------------+
-                        |                          |
-                        |          recv()          |
-                        +--------------------------+
+** Q & A
+   - In the client, show that ip address and the port number of the
+     client is assigned implicitly within the connect system call.
 
-     #+END_SRC
+     > Refer line 44 to line 49 in file [[https://github.com/psachin/udemy-c-socket-programming/blob/network-programming-assignment-1/tcp_client.c][tcp_client.c]], where "client"
+     socket addressing is defined. A client should run fine without
+     those lines. Also note that a client will behave exactly similar
+     with or without those lines. i.e. Client will choose =INADDR_ANY=
+     (Special IP address which allows program to run without
+     explicitly knowing IP address of a machine. Basically it chooses
+     a default IP address of lowest interface available which is =lo=
+     (loopback) in most cases)
 
-     * A socket is created with =socket()=
-     * a socket is connected to remote address with =connect()=
-     * and retrieved data with =recv()=
+     For client to connect, it does not need to know the port number
+     of a machine it runs on. However defining =.sin_port = 0=
+     (line 46) allows kernel to choose an ephemeral port available.
+     Hence without specifying an IP address or a port client should
+     connect without any problem.
+
+   - Find out the port number and ip address corresponding to your
+     client.
+
+     > The server always knows everything about client. But for server
+     code to print client information, we have to create a "client
+     socket" to hold information of a client to print it after the
+     connection is (accept)ted by server. Refer lines 35 in file
+     [[https://github.com/psachin/udemy-c-socket-programming/blob/network-programming-assignment-1/tcp_server.c][tcp_server.c]] where a =struct= to hold client's information is
+     defined. This information is later printed using line 51, just
+     after =accept()=. It is important to print client info only after
+     =accept()=, if one tries to print client's info before =accept()=
+     it will print "garbage". Try shifting line 51 before line
+     48(where is connection is accepted)
+
+   - Is there any way of forcing your own port number for the client?
+
+     > Yes, try replacing value of =.sin_port= from 0 to =htons(9000)=
+     in file [[https://github.com/psachin/udemy-c-socket-programming/blob/network-programming-assignment-1/tcp_client.c][tcp_client.c]] Now the client will open port 9000 for
+     server to connect. In this way we are forcing the client to
+     communicate over 9000 with the server.
 
 
-   - *Server socket workflow*
-     #+BEGIN_SRC text nil
+** Usage
+   1. Download code for both client and server using
+      #+BEGIN_SRC sh -n
+	git clone https://github.com/psachin/udemy-c-socket-programming.git \
+	    -b network-programming-assignment-1
+      #+END_SRC
 
+   2. To compile, run
+      #+BEGIN_SRC sh -n
+	make
+      #+END_SRC
 
-                        +--------------------------+
-                        |                          |
-                        |        socket()          |
-                        +-----------+--------------+
-                                    |
-                                    |
-                        +-----------v--------------+
-                        |                          |
-                        |          bind()          |
-                        +------------+-------------+
-                                     |
-                                     |
-                        +------------v-------------+
-                        |                          |
-                        |          listen()        |
-                        +------------+-------------+
-                                     |
-                                     |
-                        +------------v-------------+
-                        |                          |
-                        |         accept()         |
-                        +--------------------------+
+      Typical output of =make= will be,
+      #+BEGIN_SRC sh -n
+	$ make
+	gcc			     tcp_client.c   -o tcp_client
+	gcc			     tcp_server.c   -o tcp_server
+      #+END_SRC
 
-     #+END_SRC
+   3. If you do any changes in code, simple run =make= again. That
+      should re-compile the binary
 
-     * We also need to create a =socket()=
-     * then we =bind()= that socket to IP address and port
-     * where it can =listen()= for connections
-     * and =accept()= connection
-     * in order to =send()= and =recv()= data from other sockets it
-       has connected to.
+   4. Runing a server
+      #+BEGIN_SRC sh -n
+	./tcp_server
+      #+END_SRC
 
-   - HTTP
-     + HTTP is built in top of existing TCP
-     + It has request-response cycle
+      Typical output
+      #+BEGIN_SRC sh -n
+	$ ./tcp_server
+	Server listening on 0.0.0.0:9002
+      #+END_SRC
 
-     + *HTTP client/server*
-       #+BEGIN_SRC text
+   5. Running a client
+      #+BEGIN_SRC sh -n
+	./tcp_client
+      #+END_SRC
 
-                 REQUEST                     RESPONSE
-                 =======                     ========
+      Typical output of a client when it successfully connects with
+      the server
+      #+BEGIN_SRC sh -n
+	$ ./tcp_client
+	Server responded with: You have reached the server
+      #+END_SRC
 
-         +--------------------+      +---------------------+
-         |                    |      |                     |
-         |  GET/index.html    | |---->       SERVER        |
-         |                    | |    +----------+----------+
-         +---------+----------+ |               |
-                   |            |               |
-                   |            |               |
-         +---------v----------+ |    +----------v----------+
-         |                    | |    |                     |
-         |      SERVER        | |    |  200 OK  html       |
-         +---------+----------+ |    +----------+----------+
-                   |            |               |
-                   |            |               |
-                   |            |    +----------v---------+
-                   |------------+    |                    |
-                                     |        CLIENT      |
-                                     +--------------------+
-
-       #+END_SRC
-
-       * The client requests a resource(index.html) with certain
-         method(GET)
-       * If the resource is available, the server sends 200 OK
-         response with resource(html) in response body to the client.
+      Typical output of a server when client is successfully
+      #+BEGIN_SRC sh -n
+	$ ./tcp_server
+	Server listening on 0.0.0.0:9002
+	Client addr: 127.0.0.1:45321
+      #+END_SRC

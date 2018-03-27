@@ -3,7 +3,7 @@
   $ make
   $ ./tcp_client
 
-  Requires tcp_server running in other terminal
+  Requirement: Run `./tcp_server` in another terminal
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,13 +29,24 @@ int main(int argc, char *argv[])
 	 */
 
 	/*
-	  Before we connect, we need to specify address for the socket
+	  Before we connect, we need to specify address for the
+	  socket. When sending, a socket bound with INADDR_ANY binds
+	  to the default IP address, which is that of the
+	  lowest-numbered interface. This is why it connects to
+	  localhost(127.0.0.1) if server
 	 */
 	struct sockaddr_in server_address = {
 		.sin_family = AF_INET,
 		.sin_port = htons(9002),
 		.sin_addr.s_addr = INADDR_ANY,
 	};
+
+	/* Change client's port */
+	struct sockaddr_in client = {
+	    .sin_port = 0, /* 0: pick ephemeral port, htons(9000): for static */
+	};
+
+	bind(network_socket, (struct sockaddr *) &client, sizeof(client));
 
 	/* connect */
 	int conn_status = connect(network_socket,
@@ -59,6 +70,6 @@ int main(int argc, char *argv[])
 	printf("Server responded with: %s\n", server_response);
 
 	/* finally close the socket */
-	close(network_socket);
+	/* close(network_socket); */
 	return conn_status;
 }

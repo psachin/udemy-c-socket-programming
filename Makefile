@@ -13,7 +13,7 @@ LINKERFLAG = -lm
 DEBUGFLAG = -Wall -g		# Warning all. -g produce additional
                                 # debug msg to be used with gdb
 
-BINARIES = tcp_client tcp_server http_server http_client
+BINARIES = tcp_client tcp_server
 
 all:	${BINARIES}
 
