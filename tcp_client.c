@@ -4,6 +4,11 @@
   $ ./tcp_client
 
   Requires tcp_server running in other terminal
+
+
+  Refer below files for upgraded version,
+  - https://github.com/psachin/udemy-c-socket-programming/blob/network-programming-assignment-1/tcp_client.c
+  - https://github.com/psachin/udemy-c-socket-programming/blob/network-programming-assignment-1/notes.org
  */
 #include <stdio.h>
 #include <stdlib.h>
